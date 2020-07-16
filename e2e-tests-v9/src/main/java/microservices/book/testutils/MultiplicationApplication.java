@@ -3,11 +3,14 @@ package microservices.book.testutils;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import java.io.IOException;
 import java.util.List;
-
 import microservices.book.testutils.http.ApplicationHttpUtils;
+import microservices.book.testutils.beans.AttemptResponse;
+import microservices.book.testutils.beans.Stats;
+import microservices.book.testutils.beans.User;
+import microservices.book.testutils.beans.LeaderBoardPosition;
+import microservices.book.testutils.beans.ScoreResponse;
 
 public class MultiplicationApplication {
 
@@ -91,5 +94,21 @@ public class MultiplicationApplication {
     public void deleteData() {
         httpUtils.post(CONTEXT_DELETE_DATA_GAM, "");
         httpUtils.post(CONTEXT_DELETE_DATA_MULT, "");
+    }
+
+    public ScoreResponse getScoreForAttempt(long attemptId) {
+        String response = httpUtils.get(CONTEXT_SCORE + attemptId);
+
+        if (response.isEmpty()) {
+            return new ScoreResponse(0);
+        } else {
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+            try {
+                return objectMapper.readValue(response, ScoreResponse.class);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 }

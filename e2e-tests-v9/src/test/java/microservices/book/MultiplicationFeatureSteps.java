@@ -1,8 +1,16 @@
 package microservices.book;
 
-import static org.junit.Assert.assertThat;
-
+import microservices.book.testutils.MultiplicationApplication;
+import microservices.book.testutils.beans.AttemptResponse;
+import microservices.book.testutils.beans.Stats;
+import cucumber.api.java.Before;
+import cucumber.api.java.en.Given;
+import cucumber.api.java.en.Then;
+import cucumber.api.java.en.When;
 import java.util.stream.IntStream;
+import java.util.List;
+import java.lang.Thread;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class MultiplicationFeatureSteps {
 
@@ -14,7 +22,7 @@ public class MultiplicationFeatureSteps {
         this.app = new MultiplicationApplication();
     }
 
-    @BeforeEach
+    @Before
     public void cleanUp() {
         app.deleteData();
     }
@@ -46,7 +54,8 @@ public class MultiplicationFeatureSteps {
     public void the_user_gets_points_for_the_attempt(
             final int points) throws Throwable {
         long attemptId = lastAttemptResponse.getId();
-        Thread.currentThread().sleep(2000);
+        Thread.currentThread();
+        Thread.sleep(2000);
         int score = app.getScoreForAttempt(attemptId).getScore();
         assertThat(score).isEqualTo(points);
     }
@@ -55,7 +64,8 @@ public class MultiplicationFeatureSteps {
     public void the_user_gets_the_type_badge(
             final String badgeType) throws Throwable {
         long userId = lastAttemptResponse.getUser().getId();
-        Thread.currentThread().sleep(200);
+        Thread.currentThread();
+        Thread.sleep(200);
         lastStatsResponse = app.getStatsForUser(userId);
         List<String> userBadges = lastStatsResponse.getBadges();
         assertThat(userBadges).contains(badgeType);
